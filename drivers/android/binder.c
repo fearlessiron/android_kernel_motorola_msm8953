@@ -577,7 +577,8 @@ enum {
 	BINDER_LOOPER_STATE_EXITED      = 0x04,
 	BINDER_LOOPER_STATE_INVALID     = 0x08,
 	BINDER_LOOPER_STATE_WAITING     = 0x10,
-	BINDER_LOOPER_STATE_POLL        = 0x20,
+	BINDER_LOOPER_STATE_NEED_RETURN = 0x20,
+	BINDER_LOOPER_STATE_POLL	= 0x40,
 };
 
 /**
@@ -4790,6 +4791,8 @@ static unsigned int binder_poll(struct file *filp,
 	thread = binder_get_thread(proc);
 	if (!thread)
 		return POLLERR;
+
+	thread->looper |= BINDER_LOOPER_STATE_POLL;
 
 	binder_inner_proc_lock(thread->proc);
 	thread->looper |= BINDER_LOOPER_STATE_POLL;
